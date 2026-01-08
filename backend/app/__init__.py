@@ -1,1 +1,0 @@
-# Medaka SNS backend package
