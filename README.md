@@ -125,19 +125,38 @@ cat docs/IMPLEMENTATION_PLAN.md
 
 ## 📊 進捗状況
 
-### 完了
+### ✅ 完了
 - ✅ PRD作成
 - ✅ 画面設計
 - ✅ データ設計
 - ✅ API設計
 - ✅ 実装計画
 - ✅ リリース手順
+- ✅ **Backend実装完了**
+  - Express APIサーバー
+  - Google Sheets APIクライアント
+  - JWT認証・認可ミドルウェア
+  - 品種・容器・監査ログのCRUD API
 
-### 次のステップ
-1. `QUESTIONS.md`の確認事項を決定
-2. `NEXT_PROMPTS.md`のプロンプト1を実行（Backend実装）
-3. プロンプト2を実行（iOS実装）
-4. プロンプト3を実行（テスト＆リリース）
+### 🚧 進行中
+- 🚧 Google Sheets初期設定（次のステップ）
+- 🚧 iOS実装準備
+
+### 📋 次のステップ
+1. **Google Sheetsセットアップ**
+   - スプレッドシート作成
+   - サービスアカウント設定
+   - サンプルデータ投入
+   - 詳細: `backend/SHEETS_SETUP.md`
+
+2. **Backend動作確認**
+   - 環境変数設定（`.env`）
+   - ローカルサーバー起動
+   - Postmanでテスト
+
+3. **iOS実装開始**
+   - `NEXT_PROMPTS.md`のプロンプト2を実行
+
 
 ---
 
