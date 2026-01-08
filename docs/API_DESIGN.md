@@ -1,4 +1,4 @@
-# API設計 v0.1
+﻿# API設計 v0.1
 
 ## 1. 認証・認可
 
@@ -6,14 +6,14 @@
 1. クライアントがGoogle OAuth経由でログイン
 2. バックエンドがIDトークンを検証
 3. JWT（有効期限7日）を発行
-4. 以降のリクエストは`Authorization: Bearer <JWT>`ヘッダーで認証
+4. 以降は `Authorization: Bearer <JWT>` で認証
 
 ### 1.2 権限レベル
 | Role | 品種閲覧 | 品種編集 | 容器CRUD | ユーザー管理 | 監査ログ閲覧 |
-|------|---------|---------|---------|------------|------------|
-| Viewer | ✅ | ❌ | 自分のみ | ❌ | ❌ |
-| Editor | ✅ | ✅ | 自分のみ | ❌ | ❌ |
-| Admin | ✅ | ✅ | 全て | ✅ | ✅ |
+|------|---------|---------|---------|--------------|--------------|
+| Viewer | ✓ | ✗ | 自分のみ | ✗ | ✗ |
+| Editor | ✓ | ✓ | 自分のみ | ✗ | ✗ |
+| Admin | ✓ | ✓ | 全て | ✓ | ✓ |
 
 ---
 
@@ -26,14 +26,14 @@ https://medaka-api-xxxxxx.run.app/v1
 
 ---
 
-## 3. 品種（Varieties）
+## 3. 品種（varieties）
 
 ### 3.1 GET /varieties
 品種一覧取得
 
 **Query Parameters**:
-- `search` (optional): 品種名・系統で部分一致検索
-- `lineage` (optional): 系統でフィルタ
+- `search` (optional): 品種名・系統の部分一致
+- `lineage` (optional): 系統フィルタ
 
 **Response 200**:
 ```json
@@ -50,8 +50,6 @@ https://medaka-api-xxxxxx.run.app/v1
   ]
 }
 ```
-
----
 
 ### 3.2 GET /varieties/{id}
 品種詳細取得
@@ -70,8 +68,6 @@ https://medaka-api-xxxxxx.run.app/v1
   "version": 1
 }
 ```
-
----
 
 ### 3.3 POST /varieties
 品種作成（Editor以上）
@@ -97,8 +93,6 @@ https://medaka-api-xxxxxx.run.app/v1
 }
 ```
 
----
-
 ### 3.4 PUT /varieties/{id}
 品種更新（Editor以上）
 
@@ -118,24 +112,22 @@ https://medaka-api-xxxxxx.run.app/v1
 }
 ```
 
-**Response 409** (楽観ロック失敗):
+**Response 409**:
 ```json
 {
   "error": "conflict",
-  "message": "このレコードは他のユーザーにより更新されています"
+  "message": "このレコードは他のユーザーにより更新されました"
 }
 ```
 
----
-
 ### 3.5 DELETE /varieties/{id}
-品種削除（Admin のみ）
+品種削除（Adminのみ）
 
 **Response 204**: No Content
 
 ---
 
-## 4. 容器（Containers）
+## 4. 容器（containers）
 
 ### 4.1 GET /containers
 容器一覧取得（自分の容器のみ、Adminは全て）
@@ -146,9 +138,9 @@ https://medaka-api-xxxxxx.run.app/v1
   "containers": [
     {
       "id": "c_001",
-      "name": "玄関の睡蓮鉢",
+      "name": "庭の睡蓮鉢",
       "size": "60cm水槽",
-      "location": "玄関",
+      "location": "庭",
       "variety_count": 2,
       "version": 1
     }
@@ -156,18 +148,16 @@ https://medaka-api-xxxxxx.run.app/v1
 }
 ```
 
----
-
 ### 4.2 GET /containers/{id}
-容器詳細取得（飼育中の品種も含む）
+容器詳細取得（飼育中品種も含む）
 
 **Response 200**:
 ```json
 {
   "id": "c_001",
-  "name": "玄関の睡蓮鉢",
+  "name": "庭の睡蓮鉢",
   "size": "60cm水槽",
-  "location": "玄関",
+  "location": "庭",
   "memo": "日当たり良好",
   "varieties": [
     {
@@ -180,17 +170,15 @@ https://medaka-api-xxxxxx.run.app/v1
 }
 ```
 
----
-
 ### 4.3 POST /containers
 容器作成
 
 **Request Body**:
 ```json
 {
-  "name": "玄関の睡蓮鉢",
+  "name": "庭の睡蓮鉢",
   "size": "60cm水槽",
-  "location": "玄関",
+  "location": "庭",
   "memo": "日当たり良好"
 }
 ```
@@ -203,15 +191,13 @@ https://medaka-api-xxxxxx.run.app/v1
 }
 ```
 
----
-
 ### 4.4 PUT /containers/{id}
 容器更新
 
 **Request Body**:
 ```json
 {
-  "name": "玄関の睡蓮鉢（改）",
+  "name": "庭の睡蓮鉢（改）",
   "version": 1
 }
 ```
@@ -223,8 +209,6 @@ https://medaka-api-xxxxxx.run.app/v1
   "version": 2
 }
 ```
-
----
 
 ### 4.5 DELETE /containers/{id}
 容器削除
@@ -254,10 +238,8 @@ https://medaka-api-xxxxxx.run.app/v1
 }
 ```
 
----
-
 ### 5.2 PUT /containers/{container_id}/varieties/{variety_id}
-個体数を更新
+個体数更新
 
 **Request Body**:
 ```json
@@ -275,8 +257,6 @@ https://medaka-api-xxxxxx.run.app/v1
 }
 ```
 
----
-
 ### 5.3 DELETE /containers/{container_id}/varieties/{variety_id}
 品種を容器から削除
 
@@ -287,12 +267,12 @@ https://medaka-api-xxxxxx.run.app/v1
 ## 6. 監査ログ
 
 ### 6.1 GET /audit-logs
-監査ログ取得（Admin のみ）
+監査ログ取得（Adminのみ）
 
 **Query Parameters**:
 - `target_type` (optional): `varieties`, `containers`
-- `user_id` (optional): ユーザーIDでフィルタ
-- `limit` (default: 50): 取得件数
+- `user_id` (optional): ユーザーIDフィルタ
+- `limit` (default: 50)
 
 **Response 200**:
 ```json
@@ -330,23 +310,22 @@ https://medaka-api-xxxxxx.run.app/v1
 
 ### エラーコード
 | Code | HTTP Status | 説明 |
-|------|------------|------|
+|------|-------------|------|
 | `unauthorized` | 401 | JWT未提供または無効 |
 | `forbidden` | 403 | 権限不足 |
 | `not_found` | 404 | リソースが存在しない |
 | `conflict` | 409 | 楽観ロック失敗 |
-| `validation_error` | 422 | リクエストボディのバリデーションエラー |
-| `internal_error` | 500 | サーバー内部エラー |
+| `validation_error` | 422 | バリデーションエラー |
+| `internal_error` | 500 | サーバーエラー |
 
 ---
 
 ## 8. レート制限
-
-- **制限**: 1ユーザーあたり100リクエスト/分
-- **超過時**: `429 Too Many Requests`
+- 1ユーザーあたり100リクエスト/分
+- 超過時は `429 Too Many Requests`
 
 ---
 
-**作成日**: 2026-01-08  
-**バージョン**: 0.1  
+**作成日**: 2026-01-08
+**バージョン**: 0.1
 **次回更新**: 実装開始時

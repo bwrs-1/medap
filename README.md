@@ -1,186 +1,164 @@
-# メダカ品種図鑑＋容器管理アプリ
+﻿# メダカ品種図鑑＋容器管理アプリ
 
-> メダカ愛好家が品種情報を共有し、飼育容器を管理できるiOSアプリ（MVP v0.1）
-
-## 📋 プロジェクト概要
-
-### 目的
-このプロジェクトは、以下の3つの目的を実現します：
-
-1. **品種図鑑の共有**: メダカ愛好家が品種情報を共同で編集・参照できる図鑑機能
-2. **容器管理**: 個人の飼育容器を管理し、どの容器にどの品種がいるか記録
-3. **共同編集**: 複数ユーザーで情報を共同編集（CRUD権限管理）
-
-### 対象ユーザー
-- **Primary**: 50-70代のメダカ愛好家（高齢者UI配慮必須）
-- **Secondary**: 若年層の品種コレクター
+メダカ愛好家が品種情報を参照・編集し、飼育容器を管理できるアプリ（MVP v0.1）。
+Flutter（iOSのみ）+ Google Sheets + Node.js/Expressで構成します。
 
 ---
 
-## ✨ 主な機能（MVP v0.1）
+## 目的
+- 品種図鑑: 共有・参照・検索ができる図鑑機能
+- 容器管理: どの容器にどの品種がいるかを記録
+- 共同編集: Viewer/Editor/Adminの権限管理
 
-### 🐟 品種図鑑
-- **一覧表示**: サムネイル・品種名・系統でカード表示（2列グリッド）
-- **検索**: 品種名・系統・特徴でフィルタ
-- **詳細**: 写真・説明・特徴・飼育難易度（★1-5）・価格帯
-- **編集**: Editor以上が追加・更新可能（楽観ロックで競合制御）
-
-### 🏺 容器管理
-- **CRUD**: 容器名・サイズ・設置場所・メモの管理
-- **品種紐付け**: 1容器に複数品種を登録（個体数も記録）
-- **一覧**: 容器ごとに飼育中の品種を表示
-
-### 🔐 認証・権限
-- **ログイン**: Google OAuth → JWT発行（有効期限7日間）
-- **権限レベル**:
-  - **Viewer**: 閲覧のみ
-  - **Editor**: 品種・容器の追加・編集
-  - **Admin**: ユーザー権限管理・削除権限
-- **監査ログ**: 誰がいつ何を変更したか記録
-
-### 📱 その他
-- **オフライン閲覧**: ローカルキャッシュで前回取得データを表示
-- **アクセシビリティ**: VoiceOver対応、最小文字サイズ16pt、WCAG AA準拠
+## 対象ユーザー
+- Primary: 50-70代のメダカ愛好家（アクセシビリティ重視）
+- Secondary: 若年層の品種コレクター
 
 ---
 
-## 🚫 MVP外の機能（v1以降）
+## スコープ
 
-以下の機能はMVPには含まれず、v1以降で実装予定です：
-- ❌ SNSタイムライン
-- ❌ 画像アップロード（v0.1は外部URL参照のみ）
-- ❌ プッシュ通知
-- ❌ 統計・グラフ機能
+### MVP（v0.1）
+- 品種図鑑（一覧・詳細・検索）
+- 容器CRUD、容器×品種の紐付け
+- Google OAuthログイン → JWT発行
+- 権限管理（Viewer/Editor/Admin）
+- オフライン閲覧（キャッシュ）
+- 監査ログ
 
----
-
-## 🛠 技術スタック
-
-| レイヤー | 技術 | 詳細 |
-|---------|------|------|
-| **iOS** | SwiftUI | iOS 15+対応 |
-| **Backend** | Node.js + Express | Cloud Runでホスティング |
-| **Database** | Google Sheets | 実質DBとして使用（中継API経由） |
-| **認証** | Google OAuth + JWT | 7日間有効なJWT |
-| **配信** | AltStore/SideStore | 個人のApple IDで署名 |
+### MVP外（v1以降）
+- SNSタイムライン
+- 画像アップロード（v0.1は外部URLのみ）
+- プッシュ通知
+- 統計/グラフ
 
 ---
 
-## ⚡ 非機能要件
+## 機能要件（要約）
 
-### パフォーマンス
-- 品種一覧の初回表示: **3秒以内**
-- 検索結果表示: **1秒以内**
-- オフライン時はキャッシュから**即時表示**
+### 品種図鑑
+- 一覧: サムネイル・品種名・系統のカード表示
+- 検索: 品種名・系統でフィルタ
+- 詳細: 写真・説明・特徴・難易度・価格帯
+- 編集: Editor以上が追加/更新（楽観ロック）
 
-### アクセシビリティ（高齢者対応）
-- **文字サイズ**: 最小16pt（見出しは18pt以上）
-- **タップ領域**: 最小44x44pt（Appleガイドライン準拠）
-- **コントラスト**: WCAG AA準拠
-- **VoiceOver**: 全画面対応
+### 容器管理
+- CRUD: 容器名/サイズ/設置場所/メモ
+- 紐付け: 1容器に複数品種、個体数を記録
+- 一覧: 容器ごとに飼育中品種を表示
 
-### セキュリティ
-- JWT有効期限: 7日間
-- HTTPS必須（Cloud Run/Functions）
-- スプレッドシート直アクセス禁止（中継API経由のみ）
-
----
-
-## 📁 ドキュメント構成
-
-| ファイル | 内容 |
-|---------|------|
-| [`PRD_v0.1.md`](docs/PRD_v0.1.md) | 要件定義（目的・スコープ・受入基準） |
-| [`SCREEN_DESIGN.md`](docs/SCREEN_DESIGN.md) | 画面一覧・遷移図・アクセシビリティ要件 |
-| [`DATA_DESIGN.md`](docs/DATA_DESIGN.md) | Google Sheetsのシート構成・楽観ロック |
-| [`API_DESIGN.md`](docs/API_DESIGN.md) | REST API仕様（認証・エンドポイント） |
-| [`IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) | タスク分解・見積・優先度 |
-| [`RELEASE_GUIDE.md`](docs/RELEASE_GUIDE.md) | AltStore配布手順 |
-| [`QUESTIONS.md`](docs/QUESTIONS.md) | 要確認リスト |
-| [`NEXT_PROMPTS.md`](docs/NEXT_PROMPTS.md) | 次に投げる差分プロンプト（3本） |
+### 認証/権限
+- Google OAuthでログイン、JWT（7日）発行
+- Viewer: 閲覧のみ
+- Editor: 品種/容器の追加・編集
+- Admin: ユーザー権限、監査ログ
 
 ---
 
-## 🚀 クイックスタート
+## 非機能要件（要約）
+- 品種一覧初回表示: 3秒以内
+- 検索結果: 1秒以内
+- アクセシビリティ: 最小16pt、タップ44x44pt、WCAG AA、VoiceOver
+- セキュリティ: HTTPS、JWT 7日、Sheets直アクセス禁止
 
-### 1. 要件確認
-```bash
-# 要確認リストを確認
-cat docs/QUESTIONS.md
+---
+
+## 設計決定（抜粋）
+- 画像は外部URL参照のみ
+- 検索対象は品種名/系統のみ
+- 容器に紐付いている品種/容器は削除不可（409）
+- 個体数0は紐付け保持、削除は明示操作
+
+---
+
+## 技術スタック
+
+### フロントエンド（iOS）
+- Flutter（iOSのみ）
+- Riverpod / go_router / dio
+- google_sign_in + flutter_secure_storage
+- Hive（キャッシュ） / cached_network_image
+
+### バックエンド
+- Node.js + Express
+- Google Sheets API
+- JWT / CORS
+- Cloud Run
+
+### データ
+- Google Sheets（varieties, containers, container_varieties, audit_log, users）
+- 楽観ロック: versionカラム
+
+---
+
+## API（概要）
+- 認証: POST `/v1/auth/login`
+- 品種: GET/POST/PUT/DELETE `/v1/varieties`
+- 容器: GET/POST/PUT/DELETE `/v1/containers`
+- 紐付け: POST/PUT/DELETE `/v1/containers/{id}/varieties`
+- 監査ログ: GET `/v1/audit-logs`（Adminのみ）
+
+---
+
+## ディレクトリ構成
+
 ```
-
-### 2. 実装開始
-```bash
-# 次のプロンプトを確認
-cat docs/NEXT_PROMPTS.md
-```
-
-### 3. タスク管理
-```bash
-# 実装計画を確認
-cat docs/IMPLEMENTATION_PLAN.md
+.
+├─ backend/          # Express API
+├─ docs/             # 設計/計画/ガイド
+├─ frontend/         # Flutter（iOS）
+└─ README.md
 ```
 
 ---
 
-## 📊 進捗状況
+## セットアップ（要約）
 
-### ✅ 完了
-- ✅ PRD作成
-- ✅ 画面設計
-- ✅ データ設計
-- ✅ API設計
-- ✅ 実装計画
-- ✅ リリース手順
-- ✅ **Backend実装完了**
-  - Express APIサーバー
-  - Google Sheets APIクライアント
-  - JWT認証・認可ミドルウェア
-  - 品種・容器・監査ログのCRUD API
+### Backend
+1. `backend/SHEETS_SETUP.md` に従いSheetsを準備
+2. `backend/.env.example` を `backend/.env` にコピーして設定
+3. `cd backend && npm run dev`
 
-### 🚧 進行中
-- 🚧 Google Sheets初期設定（次のステップ）
-- 🚧 iOS実装準備
-
-### 📋 次のステップ
-1. **Google Sheetsセットアップ**
-   - スプレッドシート作成
-   - サービスアカウント設定
-   - サンプルデータ投入
-   - 詳細: `backend/SHEETS_SETUP.md`
-
-2. **Backend動作確認**
-   - 環境変数設定（`.env`）
-   - ローカルサーバー起動
-   - Postmanでテスト
-
-3. **iOS実装開始**
-   - `NEXT_PROMPTS.md`のプロンプト2を実行
-
+### Flutter（iOS）
+1. Flutter SDKをインストール済みであることを確認
+2. `cd frontend && flutter pub get`
+3. iOS実行はmacOS + Xcodeが必要
 
 ---
 
-## 🎯 MVP受入基準
-
-以下の条件をすべて満たした時点でMVP完了とします：
-
-- [ ] 品種を10件登録し、検索・詳細表示できる
-- [ ] 容器を3件作成し、品種を紐付けできる
-- [ ] Viewer/Editorで権限差が動作する（Viewerは編集ボタンが非表示）
-- [ ] オフライン時に前回取得データを表示できる
-- [ ] 監査ログに編集履歴が記録される
-- [ ] AltStoreでインストール・起動できる
-- [ ] 高齢者が操作可能なUI（文字サイズ16pt以上、タップ領域44x44pt以上）
-
+## リリース
+AltStore/SideStore配布（詳細: `docs/RELEASE_GUIDE.md`）
 
 ---
 
-## 📝 ライセンス
+## 進捗
 
-TBD（要確認リストで決定）
+### 完了
+- Backend実装（認証・品種/容器API・監査ログ）
+- 設計ドキュメント整備
+- Flutterプロジェクトの骨組み作成
+
+### 残タスク（抜粋）
+- Google Sign-In → JWT交換の実装
+- API CRUDの画面連携
+- 画面UI実装（`docs/SCREEN_DESIGN.md`）
+- Hiveキャッシュ
+- iOS実機/シミュレータテスト
 
 ---
 
-**作成日**: 2026-01-08  
-**バージョン**: 0.1  
-**次回更新**: Backend実装完了時
+## ドキュメント一覧
+- `docs/PRD_v0.1.md`
+- `docs/API_DESIGN.md`
+- `docs/DATA_DESIGN.md`
+- `docs/SCREEN_DESIGN.md`
+- `docs/IMPLEMENTATION_PLAN.md`
+- `docs/DECISIONS.md`
+- `docs/RELEASE_GUIDE.md`
+- `docs/QUESTIONS.md`
+- `docs/NEXT_PROMPTS.md`
+
+---
+
+## ライセンス
+MIT予定（`docs/DECISIONS.md` 参照）
